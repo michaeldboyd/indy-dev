@@ -20,7 +20,16 @@ async def run():
 
 
     #----- Enter Code Here -----#
-
+    pool_name = 'pool1'
+    pool_genesis_txn_path = get_pool_genesis_txn_path(pool_name)
+    pool_config = json.dumps({"genesis_txn": str(pool_genesis_txn_path)})
+    await pool.set_protocol_version(PROTOCOL_VERSION)
+    try:
+        await pool.create_pool_ledger_config(pool_name, pool_config)
+    except IndyError as ex:
+        if ex.error_code == ErrorCode.PoolLedgerConfigAlreadyExistsError:
+            pass
+    pool_handle = await pool.open_pool_ledger(pool_name, None)
 
     
 
